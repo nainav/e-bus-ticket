@@ -1,0 +1,163 @@
+<div>
+  <!-- <h1 x-large class="sample-content">Your Content Here</h1> -->
+
+  <hr>
+
+  <div>
+    <!-- For hot module reloading run -->
+    <!-- <pre>npm run start:hmr</pre> -->
+  </div>
+
+  <hr>
+  <div class="row">
+      <div class="column" style="background-color: white;" *ngIf="pickuppoint">
+        <h2>Bus details</h2>
+         
+        <table border="1" id="customers" *ngFor="let bus of bus_ids  ">
+        
+            <th *ngIf="bus.name=='500C'">Bus Name</th>
+            <th *ngIf="bus.name=='500C'">Start</th>
+            <th *ngIf="bus.name=='500C'">End</th>
+            <th *ngIf="bus.name=='500C'">Distance</th>
+            <th *ngIf="bus.name=='500C'">Total stops</th>
+            <th *ngIf="bus.name=='500C'">Frequency</th>
+            <tr *ngIf="bus.name=='500C'">
+              <td> {{bus.name}}</td>
+              <td>{{bus.start}}</td>
+              <td> {{bus.end}}</td>
+              <td> {{bus.distance}}</td>
+              <td> {{bus.totalstops}}</td>
+              <td> {{bus.frequency}}</td>
+            </tr>
+        </table>
+      </div>
+      <div class="column" style="background-color:white;">
+        <!-- {{paymentMessage[0]|json}} -->
+        <div *ngIf="paymentMessage">
+        <h2>User Profile</h2>
+        <table *ngIf="paymentMessage[0].kyc_data.status==true" border="1" id="customers">
+          <th>Name</th>
+          <th>Phone Number</th>
+          <th>Gender</th>
+         
+          <tr *ngFor="let msg of paymentMessage">
+            
+              <td>{{msg.kyc_data.name}}</td>
+              <td>{{msg.kyc_data.phone}}</td>
+              <td>{{msg.kyc_data.gender}}</td>
+            </tr>
+        </table>
+        </div>
+        <b *ngIf="paymentMessage[0].kyc_data.status==false"><h2>Login To app to Proceed.</h2></b>
+        <h2>History</h2>  
+         <!-- <button  *ngIf="paymentMessage[0].kyc_data.status==true || isVisible==true" (click)="Logout()"s>Logout</button><button *ngIf="isVisible==false" (click)="Login()">Login</button> -->
+
+        <table *ngIf="history.length>0" border="1" id="customers">
+            <th>Pick-Up time</th>
+          <th>Pick-Up</th>
+          <th>Destination</th>
+          <th>Fare</th>
+          <th>Payment</th>
+          <th>Status</th>
+          <th>Passcode</th>
+        <tr *ngFor="let his of history">
+            <td>{{his.time  | date :'hh:mm, E'}}</td>
+          <td>{{his.start}}</td>
+          <td>{{his.end}}</td>
+          <td>{{his.fare}}</td>
+          <td>{{his.transaction}}</td>
+          <td>{{his.status}}</td>
+          <td>{{his.passcode}}</td>
+          </tr>
+        </table>
+        <i *ngIf="history.length==0">No Trips Found</i>
+      </div>
+    </div>
+<!--  -->
+<!-- <div><button >Rides History</button>  -->
+
+<!-- </div> -->
+  <div class="column">
+      <div>
+          <h3 style="color: #00838F">Scan QR Code from Bus display: {{selectedValue}}</h3>
+          <qr-scanner
+              [debug]="false"
+              [canvasWidth]="480" 
+              [canvasHeight]="420"
+              [stopAfterScan]="true" 
+              [updateTime]="500"> 
+      </qr-scanner>
+      
+    <i *ngIf="!pickuppoint">
+      <!-- <h1>Scan / Select Pick-Up point to Proceed</h1> -->
+    </i>
+   Select Pickup Point : <select  [(ngModel)]='pickuppoint' (click)="pickup(pickuppoint)">
+     <option *ngIf="pickuppoint">{{pickuppoint}}</option>
+
+        <option *ngFor="let stops of stops_ids" value={{stops.name}} >{{stops.name}}</option>
+        
+      </select><br>
+      
+  Select Destination : <select class="custom-select" [(ngModel)]='Destination' (click)="destination(Destination)">
+        <option  *ngFor="let stops of stops_ids  | orderBy: stops_ids.number : false  "  value={{stops.name}}><i *ngIf="pickuppoint!=stops.name">{{stops.name }}</i></option>
+           
+        </select><br>
+Number of Seats : 
+<select [(ngModel)]='passenger_number' class="custom-select">
+    <option *ngFor="let list of passenger_list" value={{list}} >{{list}}</option>
+     
+    
+       
+    </select><br>
+ <b *ngIf="pickuppoint"> Selected Pickup Point : {{pickuppoint}}</b><br>
+  <b *ngIf="Destination">Selected Destination : {{Destination}}</b><br>
+ <i> Fare:  {{sum}}</i><br>
+ 
+ Select Payment: <select [(ngModel)]='payment'>
+   <option>Paytm</option>
+   <option>UPI</option>
+   <option>Cash</option>
+ </select>
+ <b *ngIf="payment=='Cash'"><input type="password" [(ngModel)]='auth'> </b>
+ <br>
+ <button  class="button button3" *ngIf="payment" (click)="receipt()">Proceed to Pay </button><i *ngIf="payment"> with {{payment}} - RS {{sum * passenger_number}}/-</i>
+<br><br>
+<!-- <button  (click)="reset()">Reset</button><br><br> -->
+</div>
+</div>
+<div *ngIf="receipts" class="column" style="background-color:white">
+
+<h2 style="font-style:white">Transaction is Successful </h2>
+<br>
+<h3 sty>Hava a Nice trip</h3><br>
+<small>Enter the passcode at exit gate.</small>
+<table  border="1" id="customers">
+    
+  <th>Pick-Up</th>
+  <th>Destination</th>
+  <th>Fare</th>
+  <th>Passcode</th>
+  <th>Status</th>
+  <th>Emergency</th>
+  
+
+<tr >
+   
+  <td>{{pickuppoint}}</td>
+  <td>{{Destination}}</td>
+  <td>{{sum}}</td>
+  <td>{{passcode}}</td>
+  <td><svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+
+  </td>
+  <td> <button  class="button button3" style="background-color: red" (click)="sos()">Emergency </button></td>
+  </tr>
+</table>
+<h3 *ngIf="sos_val">Your GeoLocation details has been sent to Police station.</h3>
+<small>{{sos_msg|json}}</small>
+</div>
+
+
+  
+
+</div>
